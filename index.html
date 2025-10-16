@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENGR 4451 - E-Yoklama Sistemi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* ANIMATED BACKGROUND */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(72, 219, 251, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* NAVBAR */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .cta-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            color: white !important;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 5% 50px;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 72px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 18px 45px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* FEATURES SECTION */
+        .features {
+            padding: 100px 5%;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        /* APP SECTION */
+        .app-section {
+            padding: 100px 5%;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 30px;
+            padding: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* CARD STYLES */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #fff;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            text-align: left;
+            color: #667eea;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .pass-badge {
+            background: #10b981;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .fail-badge {
+            background: #ef4444;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 40px 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 42px;
+            }
+            .hero-content p {
+                font-size: 18px;
+            }
+            .nav-links {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="logo">ENGR 4451</div>
+        <div class="nav-links">
+            <a href="#home">Ana Sayfa</a>
+            <a href="#features">Özellikler</a>
+            <a href="#app">Sistem</a>
+            <a href="#" class="cta-btn" onclick="scrollToApp()">Giriş Yap</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Akıllı Yoklama<br>Sistemi</h1>
+            <p>QR kod tabanlı, hızlı ve güvenilir dijital yoklama çözümü. Öğretmenler ve öğrenciler için modern bir deneyim.</p>
+            <div class="hero-buttons">
+                <button class="btn-large btn-primary" onclick="scrollToApp()">Sisteme Giriş →</button>
+                <a href="#features" class="btn-large btn-secondary">Özellikleri Keşfet</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features" id="features">
+        <h2 class="section-title">Neden E-Yoklama?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Hızlı ve Kolay</h3>
+                <p>QR kod okutarak saniyeler içinde yoklama işlemini tamamlayın. Kağıt israfı yok, zaman kaybı yok.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Güvenli</h3>
+                <p>Öğrenci bilgileri şifreli olarak saklanır. Her hafta için benzersiz QR kodlar oluşturulur.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Detaylı Raporlar</h3>
+                <p>Tüm dönem boyunca devam durumunu takip edin. CSV formatında rapor alın ve analiz yapın.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Otomatik Hesaplama</h3>
+                <p>Sistem otomatik olarak devam yüzdelerini hesaplar ve geçme durumunu belirler.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobil Uyumlu</h3>
+                <p>Her cihazdan erişilebilir. Telefon, tablet veya bilgisayar fark etmez.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">♻️</div>
+                <h3>Çevre Dostu</h3>
+                <p>Kağıt kullanımını sıfıra indirerek çevreye katkıda bulunun.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- APP SECTION -->
+    <section class="app-section" id="app">
+        <div class="app-container">
+            <!-- ÖĞRETMEN GİRİŞ -->
+            <div id="teacherLogin">
+                <h2 class="section-title">Öğretmen Girişi</h2>
+                <div class="card" style="max-width: 500px; margin: 0 auto;">
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; color: rgba(255,255,255,0.7); font-size: 14px;">Kullanıcı Adı</label>
+                        <input type="text" id="teacherUsername" class="input-field" placeholder="Kullanıcı adınızı girin">
+                    </div>
+                    <div style="margin-bottom: 30px;">
+                        <label style="display: block; margin-bottom: 8px; color: rgba(255,255,255,0.7); font-size: 14px;">Şifre</label>
+                        <input type="password" id="teacherPassword" class="input-field" placeholder="Şifrenizi girin">
+                    </div>
+                    <button class="btn-submit" onclick="teacherLogin()">Giriş Yap</button>
+                </div>
+            </div>
+
+            <!-- ÖĞRETMEN PANELİ -->
+            <div id="teacherPanel" class="hidden">
+                <h2 class="section-title">QR Kod Yönetimi</h2>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
+                        <h3 style="font-size: 24px; font-weight: 600;">📱 Hafta Seçimi</h3>
+                        <button class="btn-submit" onclick="viewReport()" style="width: auto; padding: 12px 32px;">
+                            📊 Raporu Görüntüle
+                        </button>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <label style="display: block; margin-bottom: 12px; color: rgba(255,255,255,0.7); font-size: 16px;">Hafta Numarası:</label>
+                        <select id="weekSelector" class="input-field" onchange="generateSelectedWeekQR()" style="cursor: pointer;">
+                            <option value="">Hafta seçiniz...</option>
+                        </select>
+                    </div>
+
+                    <div id="selectedQRContainer" class="hidden" style="text-align: center;">
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 40px; display: inline-block; border: 1px solid rgba(255,255,255,0.1);">
+                            <h3 style="color: #667eea; font-size: 32px; margin-bottom: 30px;" id="selectedWeekTitle"></h3>
+                            <div style="background: white; padding: 30px; border-radius: 16px; margin-bottom: 20px; display: inline-block;" id="selectedQRCode"></div>
+                            <button class="btn-submit" onclick="downloadSelectedQR()" style="display: inline-block; width: auto; padding: 12px 32px; margin-top: 10px;">
+                                📥 QR Kodu İndir
+                            </button>
+                            <div style="margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.5); word-break: break-all; max-width: 400px; margin-left: auto; margin-right: auto;" id="selectedWeekURL"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAPOR EKRANI -->
+            <div id="reportScreen" class="hidden">
+                <h2 class="section-title">Devam Raporu</h2>
+                <div class="card">
+                    <button class="btn-submit" onclick="backToPanel()" style="width: auto; padding: 12px 32px; margin-bottom: 30px;">
+                        ← Geri Dön
+                    </button>
+
+                    <div id="reportContent"></div>
+                    
+                    <button class="btn-submit" onclick="exportToCSV()" style="margin-top: 20px; width: auto; padding: 12px 32px;">
+                        📥 CSV İndir
+                    </button>
+                </div>
+            </div>
+
+            <!-- ÖĞRENCİ GİRİŞ -->
+            <div id="studentLogin" class="hidden">
+                <h2 class="section-title">Hafta <span id="weekInfo"></span> Yoklama</h2>
+                <div class="card" style="max-width: 500px; margin: 0 auto;">
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; color: rgba(255,255,255,0.7); font-size: 14px;">Ad Soyad</label>
+                        <input type="text" id="studentName" class="input-field" placeholder="Adınızı ve soyadınızı girin">
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <label style="display: block; margin-bottom: 8px; color: rgba(255,255,255,0.7); font-size: 14px;">Okul Numarası</label>
+                        <input type="text" id="studentNumber" class="input-field" placeholder="Okul numaranızı girin">
+                    </div>
+
+                    <button id="submitAttendanceBtn" class="btn-submit" onclick="submitAttendance()">✅ Yoklamayı Onayla</button>
+
+                    <div id="attendanceResult" class="hidden" style="margin-top: 24px; padding: 20px; border-radius: 16px; text-align: center; font-weight: 600; font-size: 16px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 ENGR 4451 E-Yoklama Sistemi. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script>
+        const TEACHER_USERNAME = 'orkun Karabaşoğlu';
+        const TEACHER_PASSWORD = 'orkun.karabasoglu';
+        const MAX_WEEKS = 14;
+        const PASS_PERCENTAGE = 70;
+
+        const STUDENT_DATABASE = {
+            'İBRAHİM GÜLTEKİN': '18070003013',
+            'ELİF EMİNE GÜNAL': '19070001053',
+            'ERK YANKI URAL': '19070008012',
+            'ERCE ÖZKAN': '20070001057',
+            'İPEK ATİŞ': '20070002048',
+            'İDİL ECE CEVAHİR': '20070007004',
+            'SUDE ONFİDAN': '20070008016',
+            'ÖMER ARICA': '20070008017',
+            'SELİM MERT KIRCAALILI': '20070008019',
+            'BERİL DERAN GÜRBÜZ': '20070008029',
+            'ALİ HAKTAN SİĞİN': '21070001004',
+            'ARDA ALTUNHAN': '21070001051',
+            'EKREM TEMEL': '21070001070',
+            'NESRİN ŞENTÜRK': '21070002005',
+            'BATUHAN ŞİŞMAN': '21070002025',
+            'KIVANÇ EFE ERGÖNÜL': '21070005027',
+            'OĞUZ KOYUCAN': '21070005030',
+            'ZEYNEP ARSLANBUĞA': '21070005042',
+            'BESTE TEKİN': '21070007001',
+            'EKİN ALTUNKAYA': '21070007004',
+            'EMRE ERİŞİR': '21070008009',
+            'İSMAİL CANBERK DEMİRKAN': '21070008014',
+            'CAN GİRGİN': '21070008016',
+            'KEREM EROĞLU': '21070008017',
+            'ARMAĞAN SOYLU': '21070008027',
+            'ALP SERKAN MERKİT': '21070008033',
+            'ATAKAN DİNÇER': '21070008034',
+            'DEMET BÜYÜKTAŞ': '21070008206',
+            'GÜRKAN EROĞLU': '22070001041',
+            'EMRE EFE YÜKSEL': '22070001055',
+            'SÜLEYMAN BATU SARI': '22070002015',
+            'KADİR EMRE GÜNEŞ': '22070002047',
+            'TOPRAK TUNCER': '22070005040',
+            'EMRE CAN HEKİMOĞLU': '22070005053',
+            'ILGAR ŞENOL': '22070007014',
+            'EDA NUR ÇALIŞKAN': '22070008017',
+            'SAMİ BERK ŞAHİN': '22070008021',
+            'DENİZ ÜNVER': '22070008026',
+            'AYKAN KANLI': '22070008034',
+            'DENİZ KARATEPE': '22070008043',
+            'AYŞEGÜL KARINYARICI': '22070003022',
+            'AHMET ÖZGÜR KORKMAZ': '21070001046'
+        };
+
+        let attendanceData = {};
+        let currentSelectedWeek = null;
+
+        function scrollToApp() {
+            document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideAllScreens() {
+            document.getElementById('teacherLogin').classList.add('hidden');
+            document.getElementById('teacherPanel').classList.add('hidden');
+            document.getElementById('reportScreen').classList.add('hidden');
+            document.getElementById('studentLogin').classList.add('hidden');
+        }
+
+        function teacherLogin() {
+            const username = document.getElementById('teacherUsername').value;
+            const password = document.getElementById('teacherPassword').value;
+            
+            if (username === TEACHER_USERNAME && password === TEACHER_PASSWORD) {
+                hideAllScreens();
+                document.getElementById('teacherPanel').classList.remove('hidden');
+                populateWeekSelector();
+            } else {
+                alert('❌ Hatalı kullanıcı adı veya şifre!');
+            }
+        }
+
+        function populateWeekSelector() {
+            const selector = document.getElementById('weekSelector');
+            selector.innerHTML = '<option value="">Hafta seçiniz...</option>';
+            
+            for (let i = 1; i <= MAX_WEEKS; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Hafta ${i}`;
+                selector.appendChild(option);
+            }
+        }
+
+        function generateSelectedWeekQR() {
+            const weekNum = document.getElementById('weekSelector').value;
+            
+            if (!weekNum) {
+                document.getElementById('selectedQRContainer').classList.add('hidden');
+                return;
+            }
+
+            currentSelectedWeek = weekNum;
+            
+            document.getElementById('selectedWeekTitle').textContent = `Hafta ${weekNum}`;
+            
+            const qrContainer = document.getElementById('selectedQRCode');
+            qrContainer.innerHTML = '';
+            
+            const qrData = `${window.location.protocol}//${window.location.host}${window.location.pathname}?week=${weekNum}`;
+            
+            new QRCode(qrContainer, {
+                text: qrData,
+                width: 300,
+                height: 300,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            document.getElementById('selectedWeekURL').textContent = qrData;
+            document.getElementById('selectedQRContainer').classList.remove('hidden');
+        }
+
+        function downloadSelectedQR() {
+            if (!currentSelectedWeek) return;
+            
+            const canvas = document.querySelector('#selectedQRCode canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = `ENGR4451_Hafta_${currentSelectedWeek}_QR.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+        }
+
+        function viewReport() {
+            hideAllScreens();
+            document.getElementById('reportScreen').classList.remove('hidden');
+            generateReport();
+        }
+
+        function backToPanel() {
+            hideAllScreens();
+            document.getElementById('teacherPanel').classList.remove('hidden');
+        }
+
+        function submitAttendance() {
+            const name = document.getElementById('studentName').value.trim();
+            const number = document.getElementById('studentNumber').value.trim();
+            const urlParams = new URLSearchParams(window.location.search);
+            const week = urlParams.get('week');
+
+            const submitBtn = document.getElementById('submitAttendanceBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'DOĞRULANIYOR...';
+
+            if (!name || !number) {
+                showResult('⚠️ Lütfen tüm alanları doldurun!', 'fail');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Yoklamayı Onayla';
+                return;
+            }
+
+            if (STUDENT_DATABASE[name] !== number) {
+                showResult('❌ Hata: Ad Soyad veya Okul Numarası hatalı.', 'fail');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Yoklamayı Onayla';
+                return;
+            }
+
+            const weekKey = `week${week}`;
+            if (!attendanceData[weekKey]) {
+                attendanceData[weekKey] = [];
+            }
+
+            if (attendanceData[weekKey].some(s => s.number === number)) {
+                showResult('⚠️ Bu hafta için zaten yoklama kaydınız bulunmaktadır.', 'fail');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Yoklamayı Onayla';
+                return;
+            }
+            
+            attendanceData[weekKey].push({ name, number, timestamp: Date.now() });
+            showResult(`✅ ${name},
